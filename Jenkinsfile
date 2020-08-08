@@ -1,7 +1,7 @@
 
 node{
     stage('Welcome'){
-        echo 'Welcome to Pipeline as Code'
+        echo 'Welcome to Pipeine as Code'
     }
     
     stage('Build'){
