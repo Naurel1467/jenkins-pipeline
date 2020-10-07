@@ -1,0 +1,37 @@
+pipeline {   
+    agent any
+    tools {
+        maven 'maven3'
+    }
+    stages{
+        stage('git download'){
+            steps{
+                git 'https://github.com/javahometech/simple-app.git'
+            } 
+        }
+        stage('build'){
+            steps{
+            sh script: 'mvn clean package'
+            }
+        }
+        stage('nexus uplaod'){          
+            steps{
+                nexusArtifactUploader artifacts: [
+                    [
+                        artifactId: 'simple-app', 
+                        classifier: '', 
+                        file: 'target/simple-app-3.0.0-SNAPSHOT.war', 
+                        type: 'war'
+                        ]
+                    ], 
+                    credentialsId: 'Nexus3_cred', 
+                    groupId: 'in.javahome', 
+                    nexusUrl: '3.16.78.0:8081', 
+                    nexusVersion: 'nexus3', 
+                    protocol: 'http', 
+                    repository: 'my-maven-nexus', 
+                    version: '3.0.0'
+                }
+            }
+        }
+    }    
