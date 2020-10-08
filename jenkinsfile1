@@ -4,7 +4,7 @@ pipeline {
         maven 'maven3'
     }
     stages{
-        stage('git download'){
+        stage('git download'){   
             steps{
                 git 'https://github.com/javahometech/simple-app.git'
             } 
@@ -16,22 +16,29 @@ pipeline {
         }
         stage('nexus uplaod'){          
             steps{
-                nexusArtifactUploader artifacts: [
+                script{
+                    def mavenPom = readMavenPom file: 'pom.xml'  ##to dynamically change the version whenever their is a chnage in pom.xml version 
+                    nexusArtifactUploader artifacts: [
                     [
                         artifactId: 'simple-app', 
                         classifier: '', 
-                        file: 'target/simple-app-3.0.0-SNAPSHOT.war', 
+                        file: "target/simple-app-${mavenPom.version}.war", 
                         type: 'war'
                         ]
                     ], 
                     credentialsId: 'Nexus3_cred', 
                     groupId: 'in.javahome', 
-                    nexusUrl: '3.16.78.0:8081', 
+                    nexusUrl: '18.188.47.218:8081', 
                     nexusVersion: 'nexus3', 
                     protocol: 'http', 
                     repository: 'my-maven-nexus', 
-                    version: '3.0.0'
-                }
-            }
+                    version: "${mavenPom.version}"   #to dynamically change the version whenever their is a chnage in pom.xml version 
+                    }
+                }   
+            }            
         }
-    }    
+   }
+
+# references: to create this file
+# 1. https://www.youtube.com/watch?v=p_Wo3aqUJto
+# 2. https://www.youtube.com/watch?v=iegXZUGVkL8
